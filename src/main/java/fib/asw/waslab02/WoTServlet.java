@@ -67,6 +67,16 @@ public class WoTServlet extends HttpServlet {
 			/*      ^
 		      The String variable requestBody contains the sent (JSON) Data.
 		      Complete the implementation below.*/
+
+			JSONObject requestJson = new JSONObject(requestBody);
+			String author = requestJson.getString("author");
+			String text = requestJson.getString("text");
+			Tweet newTweet = tweetRepository.insertTweet(author, text);
+			JSONObject jsonTweet = new JSONObject(newTweet);
+			jsonTweet.remove("class");
+			response.setContentType("application/json");
+			response.getWriter().println(jsonTweet);
+
 			
 		}
 	}
