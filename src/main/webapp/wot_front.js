@@ -47,6 +47,16 @@ function handleDelete(tweetID) {
 	 * TASK #4
 
 	 */
+	 var deleteEndpoint = apiTweetsEndpoint + "/" + tweetID;
+
+        httpRequest = new XMLHttpRequest();
+        httpRequest.open('DELETE', deleteEndpoint, true);
+        httpRequest.onload = function() {
+           if (httpRequest.status == 200) {
+              document.getElementById("tweet_" + tweetID).remove();
+           }
+        };
+        httpRequest.send(null);
 }
 
 function generateTweetHTML(tweet, action) {  // action :== "Like" xor "Delete"

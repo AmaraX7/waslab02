@@ -85,9 +85,12 @@ public class WoTServlet extends HttpServlet {
 	// Implements DELETE http://localhost:8080/waslab02/tweets/:id
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException {
-
-    	throw new ServletException("DELETE not yet implemented");
-		
+			String requestUri = req.getRequestURI();
+			long tweetId = Long.parseLong(requestUri.substring(BASE_TWEETS_URI.length()));
+			boolean deleted = tweetRepository.deleteTweet(tweetId);
+			if (!deleted) {
+				throw new ServletException("could not delete tweet " + tweetId);
+			}
 	}
 
 }
