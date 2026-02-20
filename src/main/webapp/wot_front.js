@@ -81,8 +81,17 @@ function submitTweet() {
 	/*
 	 * TASK #3 -->
 	 */
-	var alertMessage = "Someone ({0}) wants to insert a new tweet ('{1}'),\n but this feature is not implemented yet!";
-	alert(alertMessage.templateFormat(authorInput, textInput));
+	 httpRequest = new XMLHttpRequest();
+     httpRequest.open('POST', apiTweetsEndpoint, true);
+     httpRequest.setRequestHeader("Content-Type", "application/json");
+
+     httpRequest.onload = function() {
+           if (httpRequest.status == 200) {
+              var newTweet = JSON.parse(httpRequest.responseText);
+              document.getElementById("tweetList").innerHTML = generateTweetHTML(newTweet, "Delete") + document.getElementById("tweetList").innerHTML;
+           }
+        };
+        httpRequest.send(JSON.stringify({author: authorInput, text: textInput}));
 
 	// Clear form fields
 	document.getElementById("tweetAuthor").value = "";
