@@ -62,9 +62,14 @@ function fetchTweets() {
 		if (httpRequest.status == 200) { // 200 OK
 			var tweetData = httpRequest.responseText;
 			/*
-			 * TASK #2 -->
-			 */
-			document.getElementById("tweetList").innerHTML = tweetData;
+            * TASK #2 -->
+            */
+            var tweets = JSON.parse(tweetData);
+            var html = "";
+            tweets.forEach(function(tweet) {
+                html += generateTweetHTML(tweet, "Like");
+            });
+            document.getElementById("tweetList").innerHTML = html;
 		}
 	};
 	httpRequest.send(null);
