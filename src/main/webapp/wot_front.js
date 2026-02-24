@@ -77,7 +77,13 @@ function fetchTweets() {
             var tweets = JSON.parse(tweetData);
             var html = "";
             tweets.forEach(function(tweet) {
-                html += generateTweetHTML(tweet, "Like");
+                var action;
+                if (localStorage.getItem("tweet_token_" + tweet.id)) {
+                    action = "Delete";
+                } else {
+                    action = "Like";
+                }
+                html += generateTweetHTML(tweet, action);
             });
             document.getElementById("tweetList").innerHTML = html;
 		}
