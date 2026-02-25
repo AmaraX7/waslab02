@@ -74,19 +74,39 @@ public class WoTServlet extends HttpServlet {
 			Tweet newTweet = tweetRepository.insertTweet(author, text);
 			JSONObject jsonTweet = new JSONObject(newTweet);
 			jsonTweet.remove("class");
+            jsonTweet.put("token", generateToken(newTweet.getId()));
 			response.setContentType("application/json");
 			response.getWriter().println(jsonTweet);
 
 			
 		}
 	}
-    
+
+    private String generateToken(long id) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(("secret_salt_" + id).getBytes());
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hash) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return String.valueOf(id);
+        }
+    }
+
     @Override
 	// Implements DELETE http://localhost:8080/waslab02/tweets/:id
 	public void doDelete(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException {
 			String requestUri = req.getRequestURI();
 			long tweetId = Long.parseLong(requestUri.substring(BASE_TWEETS_URI.length()));
+            String token = req.getHeader("Authorization");
+            String expectedToken = generateToken(tweetId);
+            if (token == null || !token.equals(expectedToken)) {
+                throw new ServletException("Invalid token for tweet " + tweetId);
+            }
 			boolean deleted = tweetRepository.deleteTweet(tweetId);
 			if (!deleted) {
 				throw new ServletException("could not delete tweet " + tweetId);
