@@ -48,12 +48,16 @@ function handleDelete(tweetID) {
 
 	 */
 	 var deleteEndpoint = apiTweetsEndpoint + "/" + tweetID;
+     var token = localStorage.getItem("tweet_token_" + tweetID)
 
         httpRequest = new XMLHttpRequest();
         httpRequest.open('DELETE', deleteEndpoint, true);
+        httpRequest.setRequestHeader("Authorization", token);
+
         httpRequest.onload = function() {
            if (httpRequest.status == 200) {
-              document.getElementById("tweet_" + tweetID).remove();
+               document.getElementById("tweet_" + tweetID).remove();
+               localStorage.removeItem("tweet_token_" + tweetID);
            }
         };
         httpRequest.send(null);
@@ -103,8 +107,9 @@ function submitTweet() {
 
      httpRequest.onload = function() {
            if (httpRequest.status == 200) {
-              var newTweet = JSON.parse(httpRequest.responseText);
-              document.getElementById("tweetList").innerHTML = generateTweetHTML(newTweet, "Delete") + document.getElementById("tweetList").innerHTML;
+               var newTweet = JSON.parse(httpRequest.responseText);
+               localStorage.setItem("tweet_token_" + newTweet.id, newTweet.token);
+               document.getElementById("tweetList").innerHTML = generateTweetHTML(newTweet, "Delete") + document.getElementById("tweetList").innerHTML;
            }
         };
         httpRequest.send(JSON.stringify({author: authorInput, text: textInput}));
